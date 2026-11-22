@@ -11,22 +11,28 @@ from app.models.schemas import (
 from app.services.nlp_extractor import SKILL_TAXONOMY, NLPExtractorService
 
 # Lazy model holder
+import threading
 _ST_MODEL = None
 _MODEL_LOADED = False
+_MODEL_LOCK = threading.Lock()
 
 def get_sentence_transformer_model():
     global _ST_MODEL, _MODEL_LOADED
-    if _ST_MODEL is None and not _MODEL_LOADED:
-        try:
-            from sentence_transformers import SentenceTransformer
-            # Load all-MiniLM-L6-v2
-            _ST_MODEL = SentenceTransformer("all-MiniLM-L6-v2")
-            _MODEL_LOADED = True
-        except Exception as e:
-            print(f"[SimilarityEngine] Warning: Could not load SentenceTransformer: {e}. Falling back to TF-IDF cosine similarity.")
-            _ST_MODEL = None
-            _MODEL_LOADED = True
+    with _MODEL_LOCK:
+        if _ST_MODEL is None and not _MODEL_LOADED:
+            try:
+                from sentence_transformers import SentenceTransformer
+                # Load all-MiniLM-L6-v2
+                _ST_MODEL = SentenceTransformer("all-MiniLM-L6-v2")
+                _MODEL_LOADED = True
+            except Exception as e:
+                print(f"[SimilarityEngine] Warning: Could not load SentenceTransformer: {e}. Falling back to TF-IDF cosine similarity.")
+                _ST_MODEL = None
+                _MODEL_LOADED = True
     return _ST_MODEL
+
+def is_model_loaded() -> bool:
+    return _ST_MODEL is not None
 
 class SimilarityEngineService:
     @classmethod

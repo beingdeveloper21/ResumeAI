@@ -13,7 +13,7 @@ from app.models.schemas import (
 )
 from app.services.pdf_parser import PDFParserService
 from app.services.nlp_extractor import NLPExtractorService
-from app.services.similarity_engine import SimilarityEngineService, get_sentence_transformer_model
+from app.services.similarity_engine import SimilarityEngineService, get_sentence_transformer_model, is_model_loaded
 from app.services.llm_engine import LLMEngineService
 from app.services.report_generator import ReportGeneratorService
 
@@ -58,11 +58,10 @@ Requirements:
 
 @router.get("/health", response_model=HealthResponse)
 async def health_check():
-    model = get_sentence_transformer_model()
     has_openai = bool(settings.OPENAI_API_KEY and len(settings.OPENAI_API_KEY.strip()) > 10)
     return HealthResponse(
         status="healthy",
-        model_loaded=(model is not None),
+        model_loaded=is_model_loaded(),
         openai_available=has_openai,
         version=settings.PROJECT_VERSION
     )

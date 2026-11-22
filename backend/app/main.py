@@ -9,18 +9,15 @@ from app.config import settings
 from app.api.routes import router as api_router
 from app.services.similarity_engine import get_sentence_transformer_model
 
+import threading
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: Warm up model in background/thread
-    print(f"🚀 Starting {settings.PROJECT_NAME} v{settings.PROJECT_VERSION}...")
-    try:
-        # Pre-warm SentenceTransformer
-        get_sentence_transformer_model()
-        print("✅ SentenceTransformer (all-MiniLM-L6-v2) initialized and cached in memory.")
-    except Exception as e:
-        print(f"⚠️ Warning during model preload: {e}")
+    # Startup: Warm up model in background daemon thread for instant startup
+    print(f"Starting {settings.PROJECT_NAME} v{settings.PROJECT_VERSION}...")
+    threading.Thread(target=get_sentence_transformer_model, daemon=True).start()
     yield
-    print("🛑 Shutting down ResumeAI...")
+    print("Shutting down ResumeAI...")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
