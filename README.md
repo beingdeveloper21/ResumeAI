@@ -8,6 +8,8 @@
 [![Docker](https://img.shields.io/badge/Docker-Multi--stage_Build-2496ED.svg?logo=docker&logoColor=white)](https://docker.com)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/beingdeveloper21/ResumeAI)
+
 > **ResumeAI** is a production-grade, automated resume intelligence platform that extracts structured competencies from candidate PDF resumes, benchmarks alignment against job descriptions using dense bi-encoder semantic embeddings, conducts a deterministic ATS compliance audit, and generates Google XYZ-formula bullet rewrites and tailored technical interview questions.
 
 ---
